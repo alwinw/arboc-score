@@ -1,8 +1,11 @@
 library(shiny)
+library(shinythemes)
 library(DT)
 
 # Define UI for application that draws a histogram
 ui <- fluidPage(
+  theme = shinytheme("cerulean"),
+
   titlePanel("AKI risk based on creatinine (ARBOC) score"),
 
   # Sidebar with a slider input for number of bins
