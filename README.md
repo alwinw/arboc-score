@@ -1,2 +1,1 @@
-# arboc-score
-AKI risk based on creatinine (ARBOC) score
+# AKI risk based on creatinine (ARBOC) score
