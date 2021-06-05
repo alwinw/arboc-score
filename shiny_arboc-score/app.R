@@ -34,8 +34,6 @@ ui <- fluidPage(
 server <- function(input, output) {
   points_table <- c(PCs = 1, Vas = 3, CLD = 1, Crch = 1)
 
-  output$score = renderText(paste("ARBOC Score:", sum(points_table[input$factors])))
-
   raw_table <- data.frame(
     `Total Points` = c("0", "1", "2", "3", "4", "5", "6"),
     `Risk` = c("Low", "Low", "Medium", "Medium", "High", "High", "High"),
@@ -56,7 +54,20 @@ server <- function(input, output) {
       )
     )
 
-  output$table <- renderDataTable(score_table)
+  output$score = renderText({
+    score = sum(points_table[input$factors], 0, na.rm = TRUE)
+    paste("ARBOC Score:", score)
+  })
+
+  output$table <- renderDataTable({
+    row = sum(points_table[input$factors], 0, na.rm = TRUE)
+    score_table %>%
+      formatStyle(
+        "Total Points",
+        target = "row",
+        fontWeight = styleEqual(row, "bold")
+      )
+  })
 }
 
 # Run the application
