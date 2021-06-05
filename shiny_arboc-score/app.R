@@ -6,9 +6,8 @@ ui <- fluidPage(
   titlePanel("AKI risk based on creatinine (ARBOC) score"),
 
   # Sidebar with a slider input for number of bins
-  fluidRow(
-    column(6,
-      offset = 2,
+  sidebarLayout(
+    sidebarPanel(
       checkboxGroupInput(
         inputId = "factors",
         label = "Risk Factors:",
@@ -20,30 +19,35 @@ ui <- fluidPage(
             "Cr change =1µmol/L/h over 4-5.8 hours"
           ),
         choiceValues =
-          list("PCs", "Vasopressor", "CLD", "Cr_change")
+          list("PCs", "Vas", "CLD", "Crch")
       ),
+      textOutput("score")
     ),
 
-    fluidRow(
-      column(
-        12,
-        dataTableOutput("table")
-      )
+    mainPanel(
+      dataTableOutput("table")
     )
-
   )
 )
 
 # Define server logic required to draw a histogram
 server <- function(input, output) {
-  score <- data.frame(
+  points_table <- c(PCs = 1, Vas = 3, CLD = 1, Crch = 1)
+
+  output$score = renderText(paste("ARBOC Score:", sum(points_table[input$factors])))
+
+  raw_table <- data.frame(
     `Total Points` = c("0", "1", "2", "3", "4", "5", "6"),
     `Risk` = c("Low", "Low", "Medium", "Medium", "High", "High", "High"),
     `Risk of stages 2 or 3 AKI in 8.7 to 25.6 hours` = c("0.7%", "2.3%", "12.7%", "26.5%", "42.4%", "85.3%", ">85.3%"),
     check.names = FALSE
   )
 
-  score_table <- datatable(score, rownames = FALSE, selection = "none", options = list(dom = 't', pageLength = 10)) %>%
+  score_table <- datatable(
+    raw_table,
+    rownames = FALSE, selection = "none",
+    options = list(dom = "t", pageLength = 10)
+    ) %>%
     formatStyle(
       "Total Points",
       target = "row",
