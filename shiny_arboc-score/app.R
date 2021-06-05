@@ -45,7 +45,7 @@ server <- function(input, output) {
     raw_table,
     rownames = FALSE, selection = "none",
     options = list(dom = "t", pageLength = 10)
-    ) %>%
+  ) %>%
     formatStyle(
       "Total Points",
       target = "row",
@@ -54,13 +54,13 @@ server <- function(input, output) {
       )
     )
 
-  output$score = renderText({
-    score = sum(points_table[input$factors], 0, na.rm = TRUE)
+  output$score <- renderText({
+    score <- sum(points_table[input$factors], 0, na.rm = TRUE)
     paste("ARBOC Score:", score)
   })
 
-  output$table <- renderDataTable({
-    row = sum(points_table[input$factors], 0, na.rm = TRUE)
+  output$table <- DT::renderDataTable({
+    row <- sum(points_table[input$factors], 0, na.rm = TRUE)
     score_table %>%
       formatStyle(
         "Total Points",
