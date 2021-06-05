@@ -7,10 +7,11 @@ ui <- fluidPage(
   titlePanel("AKI risk based on creatinine (ARBOC) score"),
 
   # Sidebar with a slider input for number of bins
-  sidebarLayout(
-    sidebarPanel(
-      checkboxGroupInput("factors",
-        "Risk Factors:",
+  fluidRow(
+    column(6, offset = 2,
+      checkboxGroupInput(
+        inputId = "factors",
+        label = "Risk Factors:",
         choiceNames =
           list("Cardiac Surgery",
                "Vasopressor Use",
@@ -19,35 +20,29 @@ ui <- fluidPage(
         choiceValues =
           list("PCs", "Vasopressor", "CLD", "Cr_change")
       ),
-      sliderInput("bins",
-        "Number of bins:",
-        min = 1,
-        max = 50,
-        value = 30
-      )
     ),
 
     # Show a plot of the generated distribution
-    mainPanel(
-      plotOutput("distPlot"),
-      tableOutput("scoreTable")
+    fluidRow(
+      column(6, offset = 2,
+      tableOutput("rawTable")
+    )),
+
+    fluidRow(
+      column(12,
+        dataTableOutput("scoreTable")
+      )),
+
+    fluidRow(
+      column(12,
+      dataTableOutput('table')
+      )
     )
   )
 )
 
 # Define server logic required to draw a histogram
 server <- function(input, output) {
-  output$distPlot <- renderPlot({
-    # generate bins based on input$bins from ui.R
-    x <- faithful[, 2]
-    bins <- seq(min(x), max(x), length.out = input$bins + 1)
-
-    # draw the histogram with the specified number of bins
-    hist(x, breaks = bins, col = "darkgray", border = "white")
-  }
-  )
-
-
   score <- data.frame(
     `Total Points` = c("0", "1", "2", "3", "4", "5", "6"),
     `Risk` = c("Low", "Low", "Medium", "Medium", "High", "High", "High"),
@@ -64,8 +59,9 @@ server <- function(input, output) {
       )
     )
 
-  output$scoreTable <- renderDataTable(score_table)
-
+  output$rawTable <- renderDataTable(score)
+  output$scoreTable <- renderDataTable(iris)
+  output$table <- renderDataTable(iris)
 }
 
 # Run the application
