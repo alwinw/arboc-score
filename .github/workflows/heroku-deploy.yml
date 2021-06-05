@@ -16,6 +16,6 @@ jobs:
           heroku_app_name: "arboc-score"
           heroku_email: ${{secrets.HEROKU_EMAIL}}
           usedocker: true
-          healthcheck: "https://arboc-score.herokuapp.com/health"
+          healthcheck: "https://arboc-score.herokuapp.com/"
           delay: 60
           rollbackonhealthcheckfailed: false
