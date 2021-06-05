@@ -3,41 +3,34 @@ library(DT)
 
 # Define UI for application that draws a histogram
 ui <- fluidPage(
-
   titlePanel("AKI risk based on creatinine (ARBOC) score"),
 
   # Sidebar with a slider input for number of bins
   fluidRow(
-    column(6, offset = 2,
+    column(6,
+      offset = 2,
       checkboxGroupInput(
         inputId = "factors",
         label = "Risk Factors:",
         choiceNames =
-          list("Cardiac Surgery",
-               "Vasopressor Use",
-               "Chronic Liver Disease",
-               "Cr change ≥1µmol/L/h () over 4-5.8 hours"),
+          list(
+            "Cardiac Surgery",
+            "Vasopressor Use",
+            "Chronic Liver Disease",
+            "Cr change =1µmol/L/h over 4-5.8 hours"
+          ),
         choiceValues =
           list("PCs", "Vasopressor", "CLD", "Cr_change")
       ),
     ),
 
-    # Show a plot of the generated distribution
     fluidRow(
-      column(6, offset = 2,
-      tableOutput("rawTable")
-    )),
-
-    fluidRow(
-      column(12,
-        dataTableOutput("scoreTable")
-      )),
-
-    fluidRow(
-      column(12,
-      dataTableOutput('table')
+      column(
+        12,
+        dataTableOutput("table")
       )
     )
+
   )
 )
 
@@ -50,7 +43,7 @@ server <- function(input, output) {
     check.names = FALSE
   )
 
-  score_table <- datatable(score) %>%
+  score_table <- datatable(score, rownames = FALSE, selection = "none", options = list(dom = 't', pageLength = 10)) %>%
     formatStyle(
       "Total Points",
       target = "row",
@@ -59,9 +52,7 @@ server <- function(input, output) {
       )
     )
 
-  output$rawTable <- renderDataTable(score)
-  output$scoreTable <- renderDataTable(iris)
-  output$table <- renderDataTable(iris)
+  output$table <- renderDataTable(score_table)
 }
 
 # Run the application
