@@ -1,4 +1,5 @@
 library(shiny)
+library(DT)
 
 # Define UI for application that draws a histogram
 ui <- fluidPage(
@@ -8,6 +9,16 @@ ui <- fluidPage(
   # Sidebar with a slider input for number of bins
   sidebarLayout(
     sidebarPanel(
+      checkboxGroupInput("factors",
+        "Risk Factors:",
+        choiceNames =
+          list("Cardiac Surgery",
+               "Vasopressor Use",
+               "Chronic Liver Disease",
+               "Cr change ≥1µmol/L/h () over 4-5.8 hours"),
+        choiceValues =
+          list("PCs", "Vasopressor", "CLD", "Cr_change")
+      ),
       sliderInput("bins",
         "Number of bins:",
         min = 1,
@@ -18,7 +29,8 @@ ui <- fluidPage(
 
     # Show a plot of the generated distribution
     mainPanel(
-      plotOutput("distPlot")
+      plotOutput("distPlot"),
+      tableOutput("scoreTable")
     )
   )
 )
@@ -32,7 +44,28 @@ server <- function(input, output) {
 
     # draw the histogram with the specified number of bins
     hist(x, breaks = bins, col = "darkgray", border = "white")
-  })
+  }
+  )
+
+
+  score <- data.frame(
+    `Total Points` = c("0", "1", "2", "3", "4", "5", "6"),
+    `Risk` = c("Low", "Low", "Medium", "Medium", "High", "High", "High"),
+    `Risk of stages 2 or 3 AKI in 8.7 to 25.6 hours` = c("0.7%", "2.3%", "12.7%", "26.5%", "42.4%", "85.3%", ">85.3%"),
+    check.names = FALSE
+  )
+
+  score_table <- datatable(score) %>%
+    formatStyle(
+      "Total Points",
+      target = "row",
+      backgroundColor = styleEqual(
+        0:6, c("#97FF97", "#97FF97", "#FFFFA7", "#FFFFA7", "#FFA7A7", "#FFA7A7", "#FFA7A7")
+      )
+    )
+
+  output$scoreTable <- renderDataTable(score_table)
+
 }
 
 # Run the application
